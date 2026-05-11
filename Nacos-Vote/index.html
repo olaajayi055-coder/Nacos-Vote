@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NACOS Awards 2026 - Vote Now</title>
+  <script src="https://js.paystack.co/v1/inline.js"></script>
+  <style>
+    :root {
+      --primary: #ffd700;
+      --dark: #0f2e1a;
+      --green: #1a5f2a;
+      --light: #ffffff;
+      --hnd: #667eea;
+      --nd: #f5576c;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background: linear-gradient(135deg, var(--dark) 0%, var(--green) 100%); color: var(--light); min-height: 100vh; padding: 20px; }
+    .container { max-width: 900px; margin: 0 auto; background: rgba(255,255,255,0.06); border-radius: 20px; padding: 30px; border: 2px solid var(--primary); backdrop-filter: blur(10px); }
+    h1, h2, h3 { color: var(--primary); text-align: center; margin-bottom: 15px; }
+    p { text-align: center; margin-bottom: 15px; color: #eee; }
+    
+    /* Countdown */
+    .countdown-banner { background: linear-gradient(135deg, #ff416c, #ff4b2b); color: white; padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 25px; font-weight: bold; box-shadow: 0 4px 15px rgba(255, 75, 43, 0.3); }
+    .countdown-timer { font-family: monospace; font-size: 1.6em; letter-spacing: 2px; margin-top: 5px; }
+    .closed { background: #555; cursor: not-allowed; }
+
+    /* Forms & Inputs */
+    input, select { width: 100%; padding: 14px; margin: 10px 0 18px; border: 2px solid var(--primary); border-radius: 10px; font-size: 16px; background: #fff; color: #000; transition: 0.3s; }
+    input:focus, select:focus { outline: none; border-color: #fff; box-shadow: 0 0 0 3px rgba(255,215,0,0.3); }
+    
+    /* Category Selection */
+    .category-select { background: rgba(255,255,255,0.08); padding: 16px; border-radius: 12px; margin-bottom: 12px; cursor: pointer; border: 2px solid transparent; transition: 0.3s; display: flex; align-items: center; justify-content: space-between; }
+    .category-select:hover { background: rgba(255,255,255,0.12); transform: translateY(-2px); }
+    .category-select.active { border-color: var(--primary); background: rgba(255,215,0,0.15); }
+    .category-select input[type="checkbox"] { width: 20px; height: 20px; margin: 0 12px 0 0; cursor: pointer; }
+    .price-tag { background: var(--primary); color: var(--dark); padding: 5px 12px; border-radius: 20px; font-weight: bold; font-size: 0.9em; }
+    .section-title { text-align: left; color: #fff; margin: 25px 0 15px; padding-left: 10px; border-left: 4px solid; }
+    .hnd-title { border-color: var(--hnd); color: var(--hnd); }
+    .nd-title { border-color: var(--nd); color: var(--nd); }
+
+    /* Total Box */
+    .total-box { background: linear-gradient(135deg, var(--primary), #ffed4e); color: var(--dark); padding: 20px; border-radius: 14px; text-align: center; margin: 25px 0; box-shadow: 0 5px 20px rgba(255,215,0,0.3); }
+    .total-amount { font-size: 2.8em; font-weight: 800; margin: 5px 0; }
+    
+    /* Buttons */
+    button { width: 100%; padding: 16px; border: none; border-radius: 12px; font-size: 1.2em; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
+    .btn-pay { background: var(--primary); color: var(--dark); }
+    .btn-pay:hover { transform: scale(1.02); box-shadow: 0 5px 15px rgba(255,215,0,0.4); }
+    .btn-pay:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-submit { background: #4CAF50; color: white; }
+    
+    /* Voting Section */
+    .voting-header { background: #4CAF50; padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 25px; }
+    .nominee-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 15px; margin-top: 15px; }
+    .nominee-card { background: rgba(255,255,255,0.08); border: 2px solid transparent; border-radius: 14px; padding: 15px; text-align: center; cursor: pointer; transition: 0.3s; position: relative; }
+    .nominee-card:hover { background: rgba(255,255,255,0.15); transform: translateY(-3px); }
+    .nominee-card input { position: absolute; opacity: 0; }
+    .nominee-card.selected { border-color: var(--primary); background: rgba(255,215,0,0.2); box-shadow: 0 0 15px rgba(255,215,0,0.3); }
+    .nominee-card img { width: 75px; height: 75px; border-radius: 50%; object-fit: cover; margin-bottom: 10px; border: 3px solid #fff; }
+    .nominee-name { display: block; font-weight: bold; color: var(--primary); font-size: 1.05em; }
+    
+    /* Utility */
+    .hidden { display: none; }
+    .loader { border: 4px solid rgba(255,255,255,0.3); border-top: 4px solid var(--primary); border-radius: 50%; width: 35px; height: 35px; animation: spin 1s linear infinite; margin: 15px auto; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .success-box { background: #4CAF50; padding: 30px; border-radius: 15px; text-align: center; margin-top: 20px; }
+    
+    @media (max-width: 600px) {
+      .container { padding: 20px 15px; }
+      .total-amount { font-size: 2.2em; }
+      .nominee-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- COUNTDOWN -->
+    <div class="countdown-banner" id="countdownBanner">
+      ⏳ VOTING CLOSES IN: <div class="countdown-timer" id="timer">Loading...</div>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 25px;">
+      <h1>🏆 NACOS AWARDS 2026</h1>
+      <p>AAPOLY Chapter | Students & Public Welcome</p>
+    </div>
+
+    <!-- PAYMENT & SELECTION -->
+    <div id="paymentSection">
+      <h2>📝 VOTER DETAILS</h2>
+      <input type="email" id="voterEmail" placeholder="Email (for receipt)" required>
+      <input type="text" id="voterName" placeholder="Full Name" required>
+      <select id="voterType">
+        <option value="Outsider">🌍 Outsider / General Public</option>
+        <option value="HND Student">🎓 HND Student</option>
+        <option value="ND Student">📚 ND Student</option>
+        <option value="Alumni">🎓 Alumni</option>
+        <option value="Staff">👨‍ Staff / Faculty</option>
+      </select>
+
+      <h3 class="section-title hnd-title">🎓 HND CATEGORIES</h3>
+      <div id="hndSelection"></div>
+
+      <h3 class="section-title nd-title">📚 ND CATEGORIES</h3>
+      <div id="ndSelection"></div>
+
+      <div class="total-box">
+        <p style="margin:0; font-weight:bold; color:#0f2e1a;">TOTAL AMOUNT</p>
+        <div class="total-amount" id="totalAmount">₦0</div>
+        <p style="margin:5px 0 0; font-size:0.85em; color:#333;">Select categories to unlock voting</p>
+      </div>
+
+      <button class="btn-pay" id="payBtn" onclick="initiatePayment()" disabled>💳 Pay & Unlock Voting</button>
+      <div id="payLoader" class="hidden"><div class="loader"></div><p>Processing secure payment...</p></div>
+    </div>
+
+    <!-- VOTING SECTION -->
+    <div class="hidden" id="votingSection">
+      <div class="voting-header">
+        <h3>✅ Payment Verified! Cast Your Votes</h3>
+        <p>Welcome, <span id="displayName" style="font-weight:bold; color:#fff;"></span></p>
+      </div>
+      <form id="voteForm"></form>
+    </div>
+
+    <div id="successMessage" class="hidden success-box">
+      <h2>🎉 VOTE SUBMITTED SUCCESSFULLY!</h2>
+      <p>Thank you for supporting NACOS AAPOLY Chapter.</p>
+      <button class="btn-submit" onclick="location.reload()">🔄 Vote Again (New Payment)</button>
+    </div>
+  </div>
+
+  <script>
+    // ⚙️ CONFIGURATION (REPLACE THESE BEFORE DEPLOYING)
+    const PAYSTACK_KEY = 'pk_test_72e588b6fefb0a12f6447abd1e7ea3397d3d1646';
+    const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwLjir27IZda5xkYVGo0GfujmIb5jqHsfbQmI1ao1swDMhKTP8F2pWuNX5kcQjwFopj/exec';
+    const VOTING_DEADLINE = new Date("2026-05-20T23:59:59+01:00").getTime();
+    
+    let votingClosed = false;
+    let voterData = {};
+
+    // 💰 PRICING (Edit amounts here in Naira)
+    const PRICES = {
+      hnd: { cat1: 500, cat2: 500, cat3: 500, cat4: 500, cat5: 500, cat6: 500, cat7: 1000, cat8: 1000, cat9: 500, cat10: 500, cat11: 500, cat12: 500, cat13: 500, cat14: 500 },
+      nd: { cat1: 500, cat2: 500, cat3: 500, cat4: 500, cat5: 500, cat6: 500, cat7: 1000, cat8: 1000, cat9: 500, cat10: 550, cat11: 500, cat12: 500, cat13: 500, cat14: 500 }
+    };
+
+    const CAT_NAMES = ["Most Influential", "Entrepreneur of the Year", "Most Handsome", "Most Beautiful", "Fashionista Male", "Fashionista Female", "Most Popular", "Most Expensive", "Brand of the Year", "Most Talented", "Best Couple", "Mr & Miss Charismatic", "Best Personality", "Most Dramatic"];
+
+    // 1. BUILD SELECTION UI
+    function buildSelections() {
+      const hndBox = document.getElementById('hndSelection');
+      const ndBox = document.getElementById('ndSelection');
+      
+      ['hnd', 'nd'].forEach(type => {
+        const box = type === 'hnd' ? hndBox : ndBox;
+        CAT_NAMES.forEach((name, i) => {
+          const id = `${type}_cat${i+1}`;
+          const price = PRICES[type][`cat${i+1}`];
+          box.innerHTML += `
+            <label class="category-select">
+              <div style="display:flex; align-items:center;">
+                <input type="checkbox" id="${id}" data-price="${price}" onchange="calculateTotal()">
+                <span><strong>${i+1}. ${name}</strong> (${type.toUpperCase()})</span>
+              </div>
+              <span class="price-tag">₦${price}</span>
+            </label>`;
+        });
+      });
+    }
+
+    // 2. CALCULATE TOTAL (BUG-FIXED)
+    function calculateTotal() {
+      const checks = document.querySelectorAll('input[type="checkbox"]:checked');
+      let total = 0;
+      
+      checks.forEach(cb => {
+        total += parseInt(cb.dataset.price);
+        cb.closest('.category-select').classList.add('active');
+      });
+      
+      // Remove active class from unchecked
+      document.querySelectorAll('.category-select').forEach(label => {
+        if(!label.querySelector('input').checked) label.classList.remove('active');
+      });
+
+      document.getElementById('totalAmount').innerText = `₦${total.toLocaleString()}`;
+      document.getElementById('payBtn').disabled = total === 0;
+    }
+
+    // 3. PAYSTACK PAYMENT
+    function initiatePayment() {
+      if(votingClosed) return alert("Voting has closed.");
+      const email = document.getElementById('voterEmail').value.trim();
+      const name = document.getElementById('voterName').value.trim();
+      const type = document.getElementById('voterType').value;
+      
+      if(!email || !name) { alert('Please enter your email and full name.'); return; }
+      if(!validateEmail(email)) { alert('Please enter a valid email address.'); return; }
+
+      const checks = document.querySelectorAll('input[type="checkbox"]:checked');
+      const categories = Array.from(checks).map(cb => cb.id);
+      const totalKobo = Array.from(checks).reduce((sum, cb) => sum + (parseInt(cb.dataset.price) * 100), 0);
+      
+      voterData = { email, name, type, categories, total: totalKobo/100 };
+      
+      document.getElementById('payBtn').disabled = true;
+      document.getElementById('payLoader').classList.remove('hidden');
+
+      const handler = PaystackPop.setup({
+        key: PAYSTACK_KEY,
+        email: email,
+        amount: totalKobo,
+        currency: 'NGN',
+        ref: 'NACOS_' + Math.floor(Math.random() * 1000000000),
+        callback: function(response) { verifyPayment(response.reference); },
+        onClose: function() {
+          document.getElementById('payBtn').disabled = false;
+          document.getElementById('payLoader').classList.add('hidden');
+        }
+      });
+      handler.openIframe();
+    }
+
+    function validateEmail(email) { return /\S+@\S+\.\S+/.test(email); }
+
+    // 4. VERIFY WITH BACKEND
+    async function verifyPayment(reference) {
+      try {
+        const res = await fetch(BACKEND_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'verify', reference, ...voterData })
+        });
+        const data = await res.json();
+        
+        if(data.status === 'success') {
+          document.getElementById('paymentSection').classList.add('hidden');
+          document.getElementById('votingSection').classList.remove('hidden');
+          document.getElementById('displayName').innerText = voterData.name;
+          sessionStorage.setItem('nacos_session', JSON.stringify({ ref: reference, name: voterData.name, cats: voterData.categories }));
+          renderVotingForm();
+        } else {
+          alert('❌ Verification failed: ' + (data.message || 'Unknown error'));
+          document.getElementById('payBtn').disabled = false;
+          document.getElementById('payLoader').classList.add('hidden');
+        }
+      } catch(err) {
+        alert('⚠️ Network error. Please check your connection and try again.');
+        document.getElementById('payBtn').disabled = false;
+        document.getElementById('payLoader').classList.add('hidden');
+      }
+    }
+
+    // 5. RENDER VOTING FORM
+    function renderVotingForm() {
+      const session = JSON.parse(sessionStorage.getItem('nacos_session'));
+      if(!session) return location.reload();
+      
+      const form = document.getElementById('voteForm');
+      let html = '';
+      
+      session.cats.forEach(catId => {
+        const [type, num] = catId.split('_cat');
+        const name = CAT_NAMES[parseInt(num)-1];
+        const color = type === 'hnd' ? 'var(--hnd)' : 'var(--nd)';
+        
+        html += `
+          <div class="section-title" style="border-color:${color}; color:${color};">${type.toUpperCase()} - ${name}</div>
+          <div class="nominee-grid">
+            <label class="nominee-card" onclick="selectNominee(this)">
+              <input type="radio" name="${catId}" value="Nominee 1" required>
+              <img src="https://ui-avatars.com/api/?name=Nominee+1&background=${type==='hnd'?'667eea':'f5576c'}&color=fff">
+              <span class="nominee-name">Nominee 1</span>
+            </label>
+            <label class="nominee-card" onclick="selectNominee(this)">
+              <input type="radio" name="${catId}" value="Nominee 2">
+              <img src="https://ui-avatars.com/api/?name=Nominee+2&background=${type==='hnd'?'667eea':'f5576c'}&color=fff">
+              <span class="nominee-name">Nominee 2</span>
+            </label>
+            <label class="nominee-card" onclick="selectNominee(this)">
+              <input type="radio" name="${catId}" value="Nominee 3">
+              <img src="https://ui-avatars.com/api/?name=Nominee+3&background=${type==='hnd'?'667eea':'f5576c'}&color=fff">
+              <span class="nominee-name">Nominee 3</span>
+            </label>
+          </div><br>`;
+      });
+      
+      html += `<button type="submit" class="btn-submit">🗳️ SUBMIT ALL VOTES</button>`;
+      form.innerHTML = html;
+    }
+
+    function selectNominee(card) {
+      document.querySelectorAll('.nominee-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      card.querySelector('input').checked = true;
+    }
+
+    // 6. SUBMIT VOTES
+    document.getElementById('voteForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      if(votingClosed) return alert("Voting has closed.");
+      
+      const session = JSON.parse(sessionStorage.getItem('nacos_session'));
+      if(!session) return location.reload();
+      
+      const formData = new FormData(this);
+      const votes = { action: 'vote', reference: session.ref, name: session.name, votes: {} };
+      session.cats.forEach(cat => votes.votes[cat] = formData.get(cat));
+      
+      const btn = e.target.querySelector('button');
+      btn.disabled = true; btn.innerText = "Submitting...";
+      
+      try {
+        const res = await fetch(BACKEND_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(votes)
+        });
+        const data = await res.json();
+        if(data.status === 'success') {
+          document.getElementById('votingSection').classList.add('hidden');
+          document.getElementById('successMessage').classList.remove('hidden');
+          sessionStorage.removeItem('nacos_session');
+        } else {
+          alert('❌ Vote failed: ' + data.message);
+          btn.disabled = false; btn.innerText = "🗳️ SUBMIT ALL VOTES";
+        }
+      } catch(err) {
+        alert('⚠️ Network error during submission.');
+        btn.disabled = false; btn.innerText = "🗳️ SUBMIT ALL VOTES";
+      }
+    });
+
+    // 7. COUNTDOWN TIMER
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const dist = VOTING_DEADLINE - now;
+      const timerEl = document.getElementById('timer');
+      const banner = document.getElementById('countdownBanner');
+      
+      if(dist < 0) {
+        timerEl.innerHTML = "VOTING CLOSED";
+        banner.classList.add('closed');
+        votingClosed = true;
+        document.getElementById('payBtn').disabled = true;
+        return;
+      }
+      
+      const d = Math.floor(dist / (1000*60*60*24));
+      const h = Math.floor((dist % (1000*60*60*24)) / (1000*60*60));
+      const m = Math.floor((dist % (1000*60*60)) / (1000*60));
+      const s = Math.floor((dist % (1000*60)) / 1000);
+      timerEl.innerHTML = `${d}d ${h}h ${m}m ${s}s`;
+    }
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+
+    // 8. INIT
+    window.onload = function() {
+      buildSelections();
+      const session = JSON.parse(sessionStorage.getItem('nacos_session'));
+      if(session && !votingClosed) {
+        document.getElementById('paymentSection').classList.add('hidden');
+        document.getElementById('votingSection').classList.remove('hidden');
+        document.getElementById('displayName').innerText = session.name;
+        renderVotingForm();
+      }
+    };
+  </script>
+</body>
+</html>
